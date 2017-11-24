@@ -1,11 +1,14 @@
 module ProxyFetcher
   module Providers
     class ProxyDocker < Base
-      PROVIDER_URL = 'https://www.proxydocker.com/'.freeze
+      PROVIDER_URL = 'https://www.proxydocker.com/search'.freeze
 
-      # [NOTE] Doesn't support direct filters
-      def load_proxy_list(*)
-        doc = load_document(PROVIDER_URL, {})
+      def load_proxy_list(filters)
+        default_filters = { port: 'All', type: 'HTTP', anonymity: 'All', country: 'Netherlands', city: 'All' }
+
+        filters = default_filters.merge filters
+
+        doc = load_document(PROVIDER_URL, filters)
         doc.xpath('//table[contains(@class, "table")]/tr[(not(@id="proxy-table-header")) and (count(td)>2)]')
       end
 
